@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(avoid_obstacle)
+project(client_pkg)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -8,9 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -24,18 +22,25 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-add_executable(avoid_obs_node src/avoid_obs.cpp)
-ament_target_dependencies(avoid_obs_node rclcpp std_msgs geometry_msgs sensor_msgs)
+add_executable(service_client_node src/service_client.cpp)
+ament_target_dependencies(service_client_node rclcpp std_srvs)
+
+add_executable(stop_service_client_node src/service_client_stop.cpp)
+ament_target_dependencies(stop_service_client_node rclcpp std_srvs)
+
+add_executable(service_client_v2_node src/service_client_v2.cpp)
+ament_target_dependencies(service_client_v2_node rclcpp std_srvs)
 
 install(TARGETS
-   avoid_obs_node
+   service_client_node
+   stop_service_client_node
+   service_client_v2_node
    DESTINATION lib/${PROJECT_NAME}
-)
+ )
 
 # Install launch files.
 install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
-
 ament_package()

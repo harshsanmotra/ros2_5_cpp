@@ -4,7 +4,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='my_package',
-            executable='simple_node',
+            package='client_pkg',
+            executable='service_client_node',
             output='screen'),
     ])
