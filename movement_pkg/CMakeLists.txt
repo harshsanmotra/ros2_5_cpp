@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(custom_interface)
+project(movement_pkg)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -8,11 +8,10 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(custom_interface REQUIRED)
 find_package(std_msgs REQUIRED)
-
-# >>>>>>>>>><<<<<<<<<<<<<<
-# When Generating a custom message of the Topics, Services, and Actions <<<<<<<<
-find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -26,13 +25,22 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# This function includes all of the messages of this
-# package(of the Topics, Services, and Actions i.e the one in 
-# the folder msg or srv or ______ folder) to be compiled.
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Age.msg"
-  "srv/MyCustomServiceMessage.srv"
+
+add_executable(movement_server_node src/movement_server.cpp)
+ament_target_dependencies(movement_server_node rclcpp geometry_msgs custom_interface)
+
+add_executable(movement_client_node src/movement_client.cpp)
+ament_target_dependencies(movement_client_node rclcpp geometry_msgs custom_interface)
+
+install(TARGETS
+   movement_client_node
+   movement_server_node
+   DESTINATION lib/${PROJECT_NAME}
 )
 
-# When Generating a custom message <<<<<<<<
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 ament_package()
